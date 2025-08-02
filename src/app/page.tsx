@@ -88,12 +88,41 @@ async function getPlatformStats() {
     return stats;
   } catch (error) {
     console.error('Error fetching platform stats:', error);
-    // Fallback stats - these should rarely be used since the DB function exists
-    return {
-      total_agents: 25, // Updated to reflect current actual count
-      avg_rating: 4.5,
-      total_downloads: 1000
-    };
+    // Dynamic fallback - query basic stats directly if main function fails
+    try {
+      // Import the supabase client directly for fallback
+      const { supabase } = await import('@/lib/supabase/client');
+      
+      const { count: agentCount } = await supabase
+        .from('agents')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'published');
+      
+      const { data: agents } = await supabase
+        .from('agents')
+        .select('rating_average, rating_count, download_count')
+        .eq('status', 'published');
+
+      const totalAgents = agentCount || 0;
+      const ratingsData = agents?.filter(a => a.rating_count > 0) || [];
+      const avgRating = ratingsData.length ? 
+        ratingsData.reduce((sum, agent) => sum + (agent.rating_average || 0), 0) / ratingsData.length : 0;
+      const totalDownloads = agents?.reduce((sum, agent) => sum + (agent.download_count || 0), 0) || 0;
+
+      return {
+        total_agents: totalAgents,
+        avg_rating: Math.round(avgRating * 10) / 10,
+        total_downloads: totalDownloads
+      };
+    } catch (fallbackError) {
+      console.error('Fallback stats query also failed:', fallbackError);
+      // Last resort hardcoded fallback
+      return {
+        total_agents: 0,
+        avg_rating: 0,
+        total_downloads: 0
+      };
+    }
   }
 }
 
