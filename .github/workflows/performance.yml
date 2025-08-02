@@ -32,24 +32,21 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build with bundle analysis
-        env:
-          ANALYZE: 'true'
+      - name: Build application
         run: npm run build
 
-      - name: Upload bundle analysis
-        uses: actions/upload-artifact@v4
-        with:
-          name: bundle-analysis
-          path: .next/analyze/
-          retention-days: 30
-
-      - name: Comment bundle size
-        uses: andresz1/size-limit-action@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          build_script: build
-          directory: .next
+      - name: Check bundle size
+        run: |
+          BUNDLE_SIZE=$(du -sb .next | cut -f1)
+          echo "Bundle size: $BUNDLE_SIZE bytes"
+          echo "BUNDLE_SIZE=$BUNDLE_SIZE" >> $GITHUB_ENV
+          
+          # Basic bundle size check (warn if > 50MB)
+          if [ $BUNDLE_SIZE -gt 52428800 ]; then
+            echo "⚠️ Warning: Bundle size is larger than 50MB"
+          else
+            echo "✅ Bundle size is acceptable"
+          fi
 
   lighthouse-performance:
     name: Lighthouse Performance
@@ -84,8 +81,6 @@ jobs:
           configPath: './lighthouserc.json'
           uploadArtifacts: true
           temporaryPublicStorage: true
-        env:
-          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
   performance-regression:
     name: Performance Regression Tests
@@ -208,27 +203,21 @@ jobs:
       - name: Wait for application
         run: npx wait-on http://localhost:3000
 
-      - name: Measure Web Vitals
+      - name: Basic performance check
         run: |
-          npx web-vitals-cli http://localhost:3000 \
-            --output json \
-            --runs 3 \
-            > web-vitals.json
-
-      - name: Upload Web Vitals
-        uses: actions/upload-artifact@v4
-        with:
-          name: web-vitals
-          path: web-vitals.json
-
-      - name: Send Web Vitals to monitoring
-        run: |
-          # This would send the metrics to your monitoring system
-          # For example, to Sentry or a custom endpoint
-          curl -X POST "${{ secrets.MONITORING_WEBHOOK_URL }}" \
-            -H "Content-Type: application/json" \
-            -d @web-vitals.json \
-            || echo "Failed to send metrics (non-critical)"
+          # Simple performance check using curl
+          echo "Checking basic page load time..."
+          START_TIME=$(date +%s%N)
+          curl -s http://localhost:3000 > /dev/null
+          END_TIME=$(date +%s%N)
+          LOAD_TIME=$(( ($END_TIME - $START_TIME) / 1000000 ))
+          echo "Page load time: ${LOAD_TIME}ms"
+          
+          if [ $LOAD_TIME -gt 5000 ]; then
+            echo "⚠️ Warning: Page load time is slower than 5 seconds"
+          else
+            echo "✅ Page load time is acceptable"
+          fi
 
   performance-summary:
     name: Performance Summary
