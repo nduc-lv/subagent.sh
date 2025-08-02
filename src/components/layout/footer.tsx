@@ -97,6 +97,17 @@ export function Footer() {
                 augmnt
               </Link>
             </p>
+            <span className="hidden md:inline text-muted-foreground/60">•</span>
+            <p className="text-muted-foreground/80 text-sm">
+              <Link 
+                href="https://github.com/augmnt/subagents.sh/blob/main/LICENSE" 
+                className="hover:text-foreground transition-colors"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Open source and MIT licensed
+              </Link>
+            </p>
           </div>
           <div className="flex items-center space-x-4">
             <Link
