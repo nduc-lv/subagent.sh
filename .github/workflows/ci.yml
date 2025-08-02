@@ -27,6 +27,11 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: "https://placeholder.supabase.co"
           NEXT_PUBLIC_SUPABASE_ANON_KEY: "placeholder-key"
           SUPABASE_SERVICE_ROLE_KEY: "placeholder-service-key"
+          GITHUB_APP_ID: "123456"
+          GITHUB_APP_PRIVATE_KEY: "-----BEGIN RSA PRIVATE KEY-----\nplaceholder\n-----END RSA PRIVATE KEY-----"
+          GITHUB_APP_INSTALLATION_ID: "12345678"
+          GITHUB_TOKEN: "placeholder-token"
+          GITHUB_WEBHOOK_SECRET: "placeholder-webhook-secret"
         run: npm run build
 
       - name: Check bundle size
