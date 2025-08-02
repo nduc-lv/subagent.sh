@@ -1,0 +1,255 @@
+name: Performance Monitoring
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 6 * * *' # Daily at 6 AM UTC
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  bundle-analysis:
+    name: Bundle Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build with bundle analysis
+        env:
+          ANALYZE: 'true'
+        run: npm run build
+
+      - name: Upload bundle analysis
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-analysis
+          path: .next/analyze/
+          retention-days: 30
+
+      - name: Comment bundle size
+        uses: andresz1/size-limit-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          build_script: build
+          directory: .next
+
+  lighthouse-performance:
+    name: Lighthouse Performance
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Start application
+        run: npm start &
+        env:
+          PORT: 3000
+
+      - name: Wait for application
+        run: npx wait-on http://localhost:3000
+
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v11
+        with:
+          configPath: './lighthouserc.json'
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+  performance-regression:
+    name: Performance Regression Tests
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build current version
+        run: npm run build
+        
+      - name: Measure current bundle size
+        run: |
+          CURRENT_SIZE=$(du -sb .next | cut -f1)
+          echo "CURRENT_SIZE=$CURRENT_SIZE" >> $GITHUB_ENV
+
+      - name: Checkout base branch
+        run: git checkout HEAD~1
+
+      - name: Install dependencies (base)
+        run: npm ci
+
+      - name: Build base version
+        run: npm run build
+
+      - name: Measure base bundle size
+        run: |
+          BASE_SIZE=$(du -sb .next | cut -f1)
+          echo "BASE_SIZE=$BASE_SIZE" >> $GITHUB_ENV
+
+      - name: Calculate size difference
+        run: |
+          SIZE_DIFF=$((CURRENT_SIZE - BASE_SIZE))
+          SIZE_DIFF_PERCENT=$((SIZE_DIFF * 100 / BASE_SIZE))
+          echo "SIZE_DIFF=$SIZE_DIFF" >> $GITHUB_ENV
+          echo "SIZE_DIFF_PERCENT=$SIZE_DIFF_PERCENT" >> $GITHUB_ENV
+          
+          echo "Bundle size change: $SIZE_DIFF bytes ($SIZE_DIFF_PERCENT%)"
+          
+          if [ $SIZE_DIFF_PERCENT -gt 10 ]; then
+            echo "⚠️ Bundle size increased by more than 10%"
+            exit 1
+          fi
+
+      - name: Comment PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const sizeDiff = process.env.SIZE_DIFF;
+            const sizeDiffPercent = process.env.SIZE_DIFF_PERCENT;
+            const currentSize = process.env.CURRENT_SIZE;
+            const baseSize = process.env.BASE_SIZE;
+            
+            const formatBytes = (bytes) => {
+              const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+              if (bytes === 0) return '0 Byte';
+              const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+              return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+            };
+            
+            const emoji = sizeDiffPercent > 10 ? '🔴' : sizeDiffPercent > 5 ? '🟡' : '🟢';
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## ${emoji} Bundle Size Analysis
+              
+              | Metric | Value |
+              |--------|-------|
+              | Base Size | ${formatBytes(baseSize)} |
+              | Current Size | ${formatBytes(currentSize)} |
+              | Difference | ${formatBytes(Math.abs(sizeDiff))} (${sizeDiffPercent}%) |
+              
+              ${sizeDiffPercent > 10 ? '⚠️ **Warning**: Bundle size increased by more than 10%' : ''}
+              ${sizeDiffPercent > 5 ? '⚠️ **Notice**: Bundle size increased by more than 5%' : ''}
+              `
+            });
+
+  web-vitals:
+    name: Web Vitals Monitoring
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Build application
+        run: npm run build
+
+      - name: Start application
+        run: npm start &
+        env:
+          PORT: 3000
+
+      - name: Wait for application
+        run: npx wait-on http://localhost:3000
+
+      - name: Measure Web Vitals
+        run: |
+          npx web-vitals-cli http://localhost:3000 \
+            --output json \
+            --runs 3 \
+            > web-vitals.json
+
+      - name: Upload Web Vitals
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-vitals
+          path: web-vitals.json
+
+      - name: Send Web Vitals to monitoring
+        run: |
+          # This would send the metrics to your monitoring system
+          # For example, to Sentry or a custom endpoint
+          curl -X POST "${{ secrets.MONITORING_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            -d @web-vitals.json \
+            || echo "Failed to send metrics (non-critical)"
+
+  performance-summary:
+    name: Performance Summary
+    runs-on: ubuntu-latest
+    needs: [bundle-analysis, lighthouse-performance, web-vitals]
+    if: always()
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Generate performance summary
+        run: |
+          echo "# Performance Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Results" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Bundle Analysis | ${{ needs.bundle-analysis.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Lighthouse | ${{ needs.lighthouse-performance.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Web Vitals | ${{ needs.web-vitals.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Check the individual job results for detailed information." >> $GITHUB_STEP_SUMMARY

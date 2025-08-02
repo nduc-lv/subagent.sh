@@ -1,0 +1,247 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer base {
+  :root {
+    /* Improved light mode with warmer tones and better contrast */
+    --background: 0 0% 99%;
+    --foreground: 220 14% 8%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 14% 8%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 14% 8%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 14% 8%;
+    --muted: 220 13% 95%;
+    --muted-foreground: 220 9% 46%;
+    --accent: 220 14% 95%;
+    --accent-foreground: 220 14% 8%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 84% 4.9%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 94.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  .terminal-glow {
+    @apply shadow-[0_0_20px_rgba(16,185,129,0.3)];
+  }
+  
+  .terminal-border {
+    @apply border border-terminal-green/20 hover:border-terminal-green/40 transition-colors;
+  }
+
+  /* Enhanced light mode styling */
+  .light-mode-card {
+    @apply bg-gradient-to-br from-card via-card to-card/95 border border-border/60 shadow-sm;
+  }
+  
+  .light-mode-card:hover {
+    @apply shadow-lg shadow-primary/5 border-border/80;
+  }
+  
+  .light-mode-surface {
+    @apply bg-gradient-to-br from-muted/30 via-muted/20 to-transparent;
+  }
+  
+  .light-mode-text-primary {
+    @apply text-foreground/90;
+  }
+  
+  .light-mode-text-secondary {
+    @apply text-muted-foreground/80;
+  }
+}
+
+/* Responsive and overflow prevention */
+@layer utilities {
+  /* Prevent horizontal scroll on mobile */
+  html {
+    overflow-x: hidden;
+  }
+  
+  body {
+    overflow-x: hidden;
+    position: relative;
+  }
+  
+  /* Ensure containers don't overflow on mobile only */
+  @media (max-width: 640px) {
+    .container {
+      @apply max-w-full;
+    }
+  }
+  
+  /* Mobile text adjustments */
+  @media (max-width: 640px) {
+    /* Reduce large text sizes on mobile */
+    .text-5xl {
+      @apply text-3xl;
+    }
+    
+    .text-6xl {
+      @apply text-4xl;
+    }
+    
+    /* Fix button and badge spacing */
+    .gap-8 {
+      @apply gap-4;
+    }
+    
+    /* Prevent text overflow */
+    .truncate {
+      @apply max-w-[150px];
+    }
+  }
+  
+  /* Tablet adjustments */
+  @media (min-width: 641px) and (max-width: 1024px) {
+    /* Tablet specific styles if needed */
+  }
+  
+  /* Fix absolute positioned elements */
+  .absolute {
+    @apply max-w-full;
+  }
+  
+  /* Ensure images don't overflow */
+  img {
+    @apply max-w-full h-auto;
+  }
+  
+  /* Fix grid overflow on mobile */
+  @media (max-width: 640px) {
+    .grid {
+      @apply gap-4;
+    }
+  }
+  
+  /* Ensure motion divs don't overflow */
+  [style*="transform"] {
+    @apply max-w-full;
+  }
+  
+  /* Fix badge and button overflow */
+  .inline-flex {
+    @apply flex-wrap;
+  }
+  
+  /* Responsive padding adjustments */
+  @media (max-width: 640px) {
+    .py-20 {
+      @apply py-12;
+    }
+    
+    .py-24 {
+      @apply py-16;
+    }
+    
+    .py-16 {
+      @apply py-10;
+    }
+    
+    .mb-16 {
+      @apply mb-10;
+    }
+    
+    .mb-12 {
+      @apply mb-8;
+    }
+    
+    /* Fix category card text */
+    h3 {
+      @apply break-words;
+    }
+  }
+  
+  /* Prevent horizontal scroll from absolute positioned elements */
+  section {
+    @apply overflow-hidden;
+  }
+  
+  /* Additional mobile fixes */
+  @media (max-width: 640px) {
+    
+    /* Ensure all cards fit properly */
+    .rounded-xl {
+      @apply rounded-lg;
+    }
+    
+    /* Reduce motion on mobile for performance */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  }
+  
+  /* Fix for very small screens (below 380px) */
+  @media (max-width: 380px) {
+    .text-3xl {
+      @apply text-2xl;
+    }
+    
+    .text-2xl {
+      @apply text-xl;
+    }
+    
+    .text-xl {
+      @apply text-lg;
+    }
+    
+    /* Reduce button sizes on very small screens */
+    .btn-lg {
+      @apply text-sm px-4 py-2;
+    }
+  }
+}
