@@ -110,12 +110,11 @@
     "webpack-bundle-analyzer": "^4.10.0"
   },
   "jest": {
-    "preset": "ts-jest",
     "testEnvironment": "jsdom",
     "setupFilesAfterEnv": [
       "<rootDir>/src/__tests__/setup.tsx"
     ],
-    "moduleNameMapping": {
+    "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/src/$1"
     },
     "testPathIgnorePatterns": [
@@ -123,6 +122,13 @@
       "<rootDir>/node_modules/",
       "<rootDir>/e2e/"
     ],
+    "transform": {
+      "^.+\\.(ts|tsx)$": ["ts-jest", {
+        "tsconfig": {
+          "jsx": "react-jsx"
+        }
+      }]
+    },
     "collectCoverageFrom": [
       "src/**/*.{ts,tsx}",
       "!src/**/*.d.ts",

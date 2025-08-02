@@ -1,0 +1,111 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Button Component Button Variants Visual Regression renders all sizes consistently: button-size-default 1`] = `
+<button
+  class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-terminal-green/50 focus-visible:ring-offset-2 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-mono bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 shadow-sm h-10 px-4 py-2 has-[>svg]:px-3"
+  data-slot="button"
+>
+  default
+   Button
+</button>
+`;
+
+exports[`Button Component Button Variants Visual Regression renders all sizes consistently: button-size-icon 1`] = `
+<button
+  class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-terminal-green/50 focus-visible:ring-offset-2 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-mono bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 shadow-sm size-10"
+  data-slot="button"
+>
+  icon
+   Button
+</button>
+`;
+
+exports[`Button Component Button Variants Visual Regression renders all sizes consistently: button-size-lg 1`] = `
+<button
+  class="inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-terminal-green/50 focus-visible:ring-offset-2 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-mono bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 shadow-sm h-12 rounded-lg px-6 has-[>svg]:px-4 text-base"
+  data-slot="button"
+>
+  lg
+   Button
+</button>
+`;
+
+exports[`Button Component Button Variants Visual Regression renders all sizes consistently: button-size-sm 1`] = `
+<button
+  class="inline-flex items-center justify-center whitespace-nowrap font-medium transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-terminal-green/50 focus-visible:ring-offset-2 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-mono bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 shadow-sm h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5 text-xs"
+  data-slot="button"
+>
+  sm
+   Button
+</button>
+`;
+
+exports[`Button Component Button Variants Visual Regression renders all variants consistently: button-variant-default 1`] = `
+<button
+  class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-terminal-green/50 focus-visible:ring-offset-2 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-mono bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 shadow-sm h-10 px-4 py-2 has-[>svg]:px-3"
+  data-slot="button"
+>
+  default
+   Button
+</button>
+`;
+
+exports[`Button Component Button Variants Visual Regression renders all variants consistently: button-variant-destructive 1`] = `
+<button
+  class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-terminal-green/50 focus-visible:ring-offset-2 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-mono bg-destructive text-white rounded-lg hover:bg-destructive/90 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 shadow-sm h-10 px-4 py-2 has-[>svg]:px-3"
+  data-slot="button"
+>
+  destructive
+   Button
+</button>
+`;
+
+exports[`Button Component Button Variants Visual Regression renders all variants consistently: button-variant-ghost 1`] = `
+<button
+  class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-terminal-green/50 focus-visible:ring-offset-2 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-mono rounded-lg hover:bg-accent hover:text-accent-foreground hover:shadow-sm h-10 px-4 py-2 has-[>svg]:px-3"
+  data-slot="button"
+>
+  ghost
+   Button
+</button>
+`;
+
+exports[`Button Component Button Variants Visual Regression renders all variants consistently: button-variant-link 1`] = `
+<button
+  class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-terminal-green/50 focus-visible:ring-offset-2 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-mono text-primary underline-offset-4 hover:underline h-10 px-4 py-2 has-[>svg]:px-3"
+  data-slot="button"
+>
+  link
+   Button
+</button>
+`;
+
+exports[`Button Component Button Variants Visual Regression renders all variants consistently: button-variant-outline 1`] = `
+<button
+  class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-terminal-green/50 focus-visible:ring-offset-2 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-mono border border-border bg-background rounded-lg hover:bg-accent hover:text-accent-foreground hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 shadow-sm h-10 px-4 py-2 has-[>svg]:px-3"
+  data-slot="button"
+>
+  outline
+   Button
+</button>
+`;
+
+exports[`Button Component Button Variants Visual Regression renders all variants consistently: button-variant-secondary 1`] = `
+<button
+  class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-terminal-green/50 focus-visible:ring-offset-2 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-mono bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/80 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 shadow-sm h-10 px-4 py-2 has-[>svg]:px-3"
+  data-slot="button"
+>
+  secondary
+   Button
+</button>
+`;
+
+exports[`Button Component Button Variants Visual Regression renders all variants consistently: button-variant-terminal 1`] = `
+<button
+  class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-terminal-green/50 focus-visible:ring-offset-2 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-mono bg-terminal-green text-terminal-green-foreground rounded-lg hover:bg-terminal-green/90 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 shadow-sm border-glow h-10 px-4 py-2 has-[>svg]:px-3"
+  data-slot="button"
+>
+  terminal
+   Button
+</button>
+`;

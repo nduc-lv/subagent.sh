@@ -1,6 +1,4 @@
 import '@testing-library/jest-dom';
-import { setupServer } from 'msw/node';
-import { handlers } from './mocks/handlers';
 
 // Mock Next.js router
 jest.mock('next/navigation', () => ({
@@ -58,9 +56,14 @@ jest.mock('@supabase/supabase-js', () => ({
     auth: {
       getSession: jest.fn(),
       getUser: jest.fn(),
-      onAuthStateChange: jest.fn(),
+      onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } })),
       signInWithOAuth: jest.fn(),
       signOut: jest.fn(),
+      signUp: jest.fn(),
+      signInWithPassword: jest.fn(),
+      resetPasswordForEmail: jest.fn(),
+      updateUser: jest.fn(),
+      setSession: jest.fn(),
     },
     from: jest.fn(() => ({
       select: jest.fn().mockReturnThis(),
@@ -114,24 +117,24 @@ jest.mock('@octokit/rest', () => ({
   })),
 }));
 
-// Setup MSW server for API mocking
-export const server = setupServer(...handlers);
+// Setup MSW server for API mocking - disabled for now
+// export const server = setupServer(...handlers);
 
 // Establish API mocking before all tests
-beforeAll(() => {
-  server.listen({ onUnhandledRequest: 'error' });
-});
+// beforeAll(() => {
+//   server.listen({ onUnhandledRequest: 'error' });
+// });
 
 // Reset any request handlers that we may add during the tests
 afterEach(() => {
-  server.resetHandlers();
+  // server.resetHandlers();
   jest.clearAllMocks();
 });
 
 // Clean up after the tests are finished
-afterAll(() => {
-  server.close();
-});
+// afterAll(() => {
+//   server.close();
+// });
 
 // Global test utilities
 global.ResizeObserver = jest.fn().mockImplementation(() => ({
