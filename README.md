@@ -35,7 +35,7 @@
 
 - Node.js 18+
 - npm or yarn
-- Supabase CLI (for database development)
+- Supabase CLI (for database development) ([Guide Download](https://supabase.com/docs/guides/local-development/cli/getting-started?queryGroups=platform))
 
 ### Installation
 
@@ -75,6 +75,10 @@
    ```
 
    Open [http://localhost:3000](http://localhost:3000) to see the application.
+
+
+## How to set up Oauth with Github
+- [Guide](https://supabase.com/docs/guides/auth/social-login/auth-github)
 
 ## 📚 Scripts
 
