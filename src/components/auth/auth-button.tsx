@@ -31,6 +31,7 @@ export function AuthButton({
     } catch (error) {
       console.error('Sign in error:', error);
     } finally {
+      console.log("Successfully");
       setIsSigningIn(false);
     }
   };

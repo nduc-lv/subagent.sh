@@ -76,7 +76,7 @@ BEGIN
     FROM public.agents a
     WHERE 
         a.status = 'published'
-        AND (search_query = '' OR to_tsvector('english', a.name || ' ' || COALESCE(a.description, '') || ' ' || COALESCE(a.detailed_description, '') || ' ' || array_to_string(a.tags, ' ')) @@ search_tsquery)
+        AND (search_query = '' OR to_tsvector('english', a.name || ' ' || COALESCE(a.description, '') || ' ' || COALESCE(a.detailed_description, '') || ' ' || immuatable_array_to_string(a.tags, ' ')) @@ search_tsquery)
         AND (category_filter IS NULL OR a.category_id = category_filter)
         AND (array_length(tag_filters, 1) IS NULL OR a.tags && tag_filters)
         AND (language_filter IS NULL OR a.language = language_filter)
@@ -155,7 +155,7 @@ BEGIN
                 ts_rank_cd(
                     setweight(to_tsvector('english', a.name), 'A') ||
                     setweight(to_tsvector('english', COALESCE(a.description, '')), 'B') ||
-                    setweight(to_tsvector('english', array_to_string(a.tags, ' ')), 'C') ||
+                    setweight(to_tsvector('english', immuatable_array_to_string(a.tags, ' ')), 'C') ||
                     setweight(to_tsvector('english', COALESCE(a.detailed_description, '')), 'D'),
                     search_tsquery,
                     32
@@ -177,7 +177,7 @@ BEGIN
     LEFT JOIN public.profiles p ON a.author_id = p.id
     WHERE 
         a.status = 'published'
-        AND (search_query = '' OR to_tsvector('english', a.name || ' ' || COALESCE(a.description, '') || ' ' || COALESCE(a.detailed_description, '') || ' ' || array_to_string(a.tags, ' ')) @@ search_tsquery)
+        AND (search_query = '' OR to_tsvector('english', a.name || ' ' || COALESCE(a.description, '') || ' ' || COALESCE(a.detailed_description, '') || ' ' || immuatable_array_to_string(a.tags, ' ')) @@ search_tsquery)
         AND (category_filter IS NULL OR a.category_id = category_filter)
         AND (array_length(tag_filters, 1) IS NULL OR a.tags && tag_filters)
         AND (language_filter IS NULL OR a.language = language_filter)
@@ -192,7 +192,7 @@ BEGIN
                 ts_rank_cd(
                     setweight(to_tsvector('english', a.name), 'A') ||
                     setweight(to_tsvector('english', COALESCE(a.description, '')), 'B') ||
-                    setweight(to_tsvector('english', array_to_string(a.tags, ' ')), 'C') ||
+                    setweight(to_tsvector('english', immuatable_array_to_string(a.tags, ' ')), 'C') ||
                     setweight(to_tsvector('english', COALESCE(a.detailed_description, '')), 'D'),
                     search_tsquery,
                     32

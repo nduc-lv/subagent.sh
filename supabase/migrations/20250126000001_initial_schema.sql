@@ -56,9 +56,10 @@ CREATE TABLE public.agents (
     status agent_status DEFAULT 'draft',
     version TEXT DEFAULT '1.0.0',
     tags TEXT[] DEFAULT '{}',
-    
+    slug TEXT,
+    short_description TEXT,
     -- GitHub integration
-    github_repo_url TEXT,
+    github_url TEXT, --GITHUB_URL
     github_repo_name TEXT,
     github_owner TEXT,
     github_stars INTEGER DEFAULT 0,
@@ -83,7 +84,7 @@ CREATE TABLE public.agents (
     rating_count INTEGER DEFAULT 0,
     
     -- Settings
-    featured BOOLEAN DEFAULT FALSE,
+    is_featured BOOLEAN DEFAULT FALSE,
     allow_comments BOOLEAN DEFAULT TRUE,
     
     -- Timestamps
@@ -161,10 +162,17 @@ CREATE TABLE public.votes (
     CONSTRAINT vote_target_check CHECK (
         (agent_id IS NOT NULL AND review_id IS NULL) OR
         (agent_id IS NULL AND review_id IS NOT NULL)
-    ),
-    UNIQUE(user_id, agent_id) WHERE agent_id IS NOT NULL,
-    UNIQUE(user_id, review_id) WHERE review_id IS NOT NULL
+    )
 );
+-- Enforce one vote per user per AGENT (only when agent_id is present)
+CREATE UNIQUE INDEX votes_user_agent_uq
+  ON public.votes (user_id, agent_id)
+  WHERE agent_id IS NOT NULL;
+
+-- Enforce one vote per user per REVIEW (only when review_id is present)
+CREATE UNIQUE INDEX votes_user_review_uq
+  ON public.votes (user_id, review_id)
+  WHERE review_id IS NOT NULL;
 
 -- Agent downloads tracking
 CREATE TABLE public.agent_downloads (
@@ -175,10 +183,7 @@ CREATE TABLE public.agent_downloads (
     user_agent TEXT,
     referrer TEXT,
     download_type TEXT DEFAULT 'direct', -- 'direct', 'clone', 'zip'
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    
-    -- Prevent spam downloads (same user/IP within 1 hour)
-    CONSTRAINT unique_user_download UNIQUE(agent_id, user_id, date_trunc('hour', created_at)) DEFERRABLE INITIALLY DEFERRED
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- Agent views tracking
@@ -190,10 +195,7 @@ CREATE TABLE public.agent_views (
     user_agent TEXT,
     referrer TEXT,
     session_id TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    
-    -- Prevent spam views (same session within 1 hour)
-    CONSTRAINT unique_session_view UNIQUE(agent_id, session_id, date_trunc('hour', created_at)) DEFERRABLE INITIALLY DEFERRED
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- Following/follower relationships
@@ -234,16 +236,26 @@ CREATE TABLE public.github_sync_log (
 CREATE INDEX idx_agents_category ON public.agents(category_id);
 CREATE INDEX idx_agents_author ON public.agents(author_id);
 CREATE INDEX idx_agents_status ON public.agents(status);
-CREATE INDEX idx_agents_featured ON public.agents(featured) WHERE featured = true;
+CREATE INDEX idx_agents_featured ON public.agents(is_featured) WHERE is_featured = true;
 CREATE INDEX idx_agents_rating ON public.agents(rating_average DESC);
 CREATE INDEX idx_agents_downloads ON public.agents(download_count DESC);
 CREATE INDEX idx_agents_created ON public.agents(created_at DESC);
 CREATE INDEX idx_agents_updated ON public.agents(updated_at DESC);
 CREATE INDEX idx_agents_tags ON public.agents USING GIN(tags);
-CREATE INDEX idx_agents_github_repo ON public.agents(github_owner, github_repo_name) WHERE github_repo_url IS NOT NULL;
+CREATE INDEX idx_agents_github_repo ON public.agents(github_owner, github_repo_name) WHERE github_url IS NOT NULL;
 
 -- Text search indexes
-CREATE INDEX idx_agents_search ON public.agents USING GIN(to_tsvector('english', name || ' ' || COALESCE(description, '') || ' ' || array_to_string(tags, ' ')));
+  CREATE FUNCTION immutable_array_to_string(arr ANYARRAY, sep TEXT)
+    RETURNS text
+    AS $$
+      SELECT array_to_string(arr, sep);
+    $$
+    LANGUAGE SQL
+    IMMUTABLE
+  ;
+
+
+CREATE INDEX idx_agents_search ON public.agents USING GIN(to_tsvector('english', name || ' ' || COALESCE(description, '') || ' ' || immutable_array_to_string(tags, ' ')));
 CREATE INDEX idx_categories_search ON public.categories USING GIN(to_tsvector('english', name || ' ' || COALESCE(description, '')));
 CREATE INDEX idx_profiles_search ON public.profiles USING GIN(to_tsvector('english', COALESCE(full_name, '') || ' ' || COALESCE(username, '') || ' ' || COALESCE(bio, '')));
 

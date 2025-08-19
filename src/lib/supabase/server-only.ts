@@ -183,7 +183,7 @@ export async function getOptimizedFeaturedAgents(limit = 3) {
     return featuredAgents;
 
   } catch (error) {
-    console.error('Failed to get featured agents:', error);
+    console.error('Failed to get featured agents:', error.message);
     return [];
   }
 }

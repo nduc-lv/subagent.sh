@@ -1,6 +1,5 @@
 -- Enhanced Search and Filtering System
 -- This migration adds advanced search capabilities, analytics, and performance optimizations
-
 -- Create search analytics table
 CREATE TABLE public.search_analytics (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -86,8 +85,8 @@ GROUP BY c.id, c.name;
 CREATE UNIQUE INDEX idx_search_facets_type_value ON public.search_facets(facet_type, value);
 
 -- Enhanced search indexes for better performance
-CREATE INDEX idx_agents_compound_search ON public.agents(status, featured, category_id, language, framework) WHERE status = 'published';
-CREATE INDEX idx_agents_text_search_gin ON public.agents USING GIN(to_tsvector('english', name || ' ' || COALESCE(description, '') || ' ' || COALESCE(detailed_description, '') || ' ' || array_to_string(tags, ' ')));
+CREATE INDEX idx_agents_compound_search ON public.agents(status, is_featured, category_id, language, framework) WHERE status = 'published';
+CREATE INDEX idx_agents_text_search_gin ON public.agents USING GIN(to_tsvector('english', name || ' ' || COALESCE(description, '') || ' ' || COALESCE(detailed_description, '') || ' ' || immutable_array_to_string(tags, ' ')));
 CREATE INDEX idx_agents_tags_gin ON public.agents USING GIN(tags);
 
 -- Performance indexes
@@ -188,7 +187,7 @@ BEGIN
     FROM public.agents a
     WHERE 
         a.status = 'published'
-        AND (search_query = '' OR to_tsvector('english', a.name || ' ' || COALESCE(a.description, '') || ' ' || COALESCE(a.detailed_description, '') || ' ' || array_to_string(a.tags, ' ')) @@ search_tsquery)
+        AND (search_query = '' OR to_tsvector('english', a.name || ' ' || COALESCE(a.description, '') || ' ' || COALESCE(a.detailed_description, '') || ' ' || immutable_array_to_string(a.tags, ' ')) @@ search_tsquery)
         AND (category_filter IS NULL OR a.category_id = category_filter)
         AND (array_length(tag_filters, 1) IS NULL OR a.tags && tag_filters)
         AND (language_filter IS NULL OR a.language = language_filter)
@@ -264,7 +263,7 @@ BEGIN
                 ts_rank_cd(
                     setweight(to_tsvector('english', a.name), 'A') ||
                     setweight(to_tsvector('english', COALESCE(a.description, '')), 'B') ||
-                    setweight(to_tsvector('english', array_to_string(a.tags, ' ')), 'C') ||
+                    setweight(to_tsvector('english', immutable_array_to_string(a.tags, ' ')), 'C') ||
                     setweight(to_tsvector('english', COALESCE(a.detailed_description, '')), 'D'),
                     search_tsquery,
                     32
@@ -286,7 +285,7 @@ BEGIN
     LEFT JOIN public.profiles p ON a.author_id = p.id
     WHERE 
         a.status = 'published'
-        AND (search_query = '' OR to_tsvector('english', a.name || ' ' || COALESCE(a.description, '') || ' ' || COALESCE(a.detailed_description, '') || ' ' || array_to_string(a.tags, ' ')) @@ search_tsquery)
+        AND (search_query = '' OR to_tsvector('english', a.name || ' ' || COALESCE(a.description, '') || ' ' || COALESCE(a.detailed_description, '') || ' ' || immutable_array_to_string(a.tags, ' ')) @@ search_tsquery)
         AND (category_filter IS NULL OR a.category_id = category_filter)
         AND (array_length(tag_filters, 1) IS NULL OR a.tags && tag_filters)
         AND (language_filter IS NULL OR a.language = language_filter)
@@ -301,7 +300,7 @@ BEGIN
                 ts_rank_cd(
                     setweight(to_tsvector('english', a.name), 'A') ||
                     setweight(to_tsvector('english', COALESCE(a.description, '')), 'B') ||
-                    setweight(to_tsvector('english', array_to_string(a.tags, ' ')), 'C') ||
+                    setweight(to_tsvector('english', immutable_array_to_string(a.tags, ' ')), 'C') ||
                     setweight(to_tsvector('english', COALESCE(a.detailed_description, '')), 'D'),
                     search_tsquery,
                     32
@@ -360,7 +359,7 @@ BEGIN
         COUNT(*) as search_count
     FROM public.search_analytics sa
     WHERE 
-        sa.created_at >= NOW() - INTERVAL '%s days' USING days_back
+        sd.created_at >= NOW() - (days_back || ' days')::interval
         AND char_length(sa.query) > 0
     GROUP BY sa.query
     ORDER BY search_count DESC, MAX(sa.created_at) DESC
@@ -394,7 +393,7 @@ BEGIN
             COUNT(*) as day_count
         FROM public.search_analytics
         WHERE 
-            created_at >= NOW() - INTERVAL '%s days' USING days_back
+            created_at >= NOW() - (days_back || ' days')::interval
             AND (user_id_param IS NULL OR user_id = user_id_param)
         GROUP BY date_trunc('day', created_at)
         ORDER BY search_day
@@ -409,7 +408,7 @@ BEGIN
             SELECT query 
             FROM public.search_analytics 
             WHERE 
-                created_at >= NOW() - INTERVAL '%s days' USING days_back
+                created_at >= NOW() - (days_back || ' days')::interval
                 AND (user_id_param IS NULL OR user_id = user_id_param)
                 AND char_length(query) > 0
             GROUP BY query 
@@ -419,7 +418,7 @@ BEGIN
         COALESCE(trends, '{}'::JSONB) as search_trends
     FROM public.search_analytics
     WHERE 
-        created_at >= NOW() - INTERVAL '%s days' USING days_back
+        created_at >= NOW() - (days_back || ' days')::interval
         AND (user_id_param IS NULL OR user_id = user_id_param);
 END;
 $$ LANGUAGE plpgsql;

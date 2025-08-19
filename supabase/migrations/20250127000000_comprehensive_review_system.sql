@@ -224,7 +224,7 @@ CREATE INDEX idx_review_analytics_period ON public.review_analytics(period_start
 
 -- Full-text search indexes
 CREATE INDEX idx_reviews_search ON public.reviews USING GIN(to_tsvector('english', 
-    COALESCE(title, '') || ' ' || COALESCE(content, '') || ' ' || array_to_string(COALESCE(pros, '{}'), ' ') || ' ' || array_to_string(COALESCE(cons, '{}'), ' ')
+    COALESCE(title, '') || ' ' || COALESCE(content, '') || ' ' || immutable_array_to_string(COALESCE(pros, '{}'), ' ') || ' ' || immutable_array_to_string(COALESCE(cons, '{}'), ' ')
 ));
 
 -- Partial indexes for better performance

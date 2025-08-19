@@ -201,6 +201,7 @@ export function GitHubImportForm() {
         success: false,
         errors: [error instanceof Error ? error.message : 'Import failed'],
       });
+      console.log(error);
     } finally {
       setIsLoading(false);
     }

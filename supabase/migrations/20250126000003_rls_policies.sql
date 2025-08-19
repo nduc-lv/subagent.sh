@@ -191,40 +191,41 @@ CREATE POLICY "Service role can manage GitHub sync logs" ON public.github_sync_l
     FOR ALL USING (auth.role() = 'service_role');
 
 -- Create helper function to check if user is admin (for future use)
-CREATE OR REPLACE FUNCTION auth.is_admin()
-RETURNS BOOLEAN AS $$
-BEGIN
-    RETURN EXISTS (
-        SELECT 1 FROM public.profiles
-        WHERE id = auth.uid()
-        AND (
-            -- Add admin check logic here when implementing admin roles
-            false -- Placeholder - replace with actual admin logic
-        )
-    );
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+-- no right
+-- CREATE OR REPLACE FUNCTION auth.is_admin()
+-- RETURNS BOOLEAN AS $$
+-- BEGIN
+--     RETURN EXISTS (
+--         SELECT 1 FROM public.profiles
+--         WHERE id = auth.uid()
+--         AND (
+--             -- Add admin check logic here when implementing admin roles
+--             false -- Placeholder - replace with actual admin logic
+--         )
+--     );
+-- END;
+-- $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Create helper function to check agent ownership
-CREATE OR REPLACE FUNCTION auth.owns_agent(agent_uuid UUID)
-RETURNS BOOLEAN AS $$
-BEGIN
-    RETURN EXISTS (
-        SELECT 1 FROM public.agents
-        WHERE id = agent_uuid
-        AND author_id = auth.uid()
-    );
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+-- -- Create helper function to check agent ownership
+-- CREATE OR REPLACE FUNCTION auth.owns_agent(agent_uuid UUID)
+-- RETURNS BOOLEAN AS $$
+-- BEGIN
+--     RETURN EXISTS (
+--         SELECT 1 FROM public.agents
+--         WHERE id = agent_uuid
+--         AND author_id = auth.uid()
+--     );
+-- END;
+-- $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Create helper function to check collection ownership
-CREATE OR REPLACE FUNCTION auth.owns_collection(collection_uuid UUID)
-RETURNS BOOLEAN AS $$
-BEGIN
-    RETURN EXISTS (
-        SELECT 1 FROM public.collections
-        WHERE id = collection_uuid
-        AND user_id = auth.uid()
-    );
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+-- -- Create helper function to check collection ownership
+-- CREATE OR REPLACE FUNCTION auth.owns_collection(collection_uuid UUID)
+-- RETURNS BOOLEAN AS $$
+-- BEGIN
+--     RETURN EXISTS (
+--         SELECT 1 FROM public.collections
+--         WHERE id = collection_uuid
+--         AND user_id = auth.uid()
+--     );
+-- END;
+-- $$ LANGUAGE plpgsql SECURITY DEFINER;

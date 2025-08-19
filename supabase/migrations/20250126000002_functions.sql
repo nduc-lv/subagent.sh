@@ -317,7 +317,7 @@ BEGIN
         CASE 
             WHEN search_query = '' THEN 0::REAL
             ELSE ts_rank(
-                to_tsvector('english', a.name || ' ' || COALESCE(a.description, '') || ' ' || array_to_string(a.tags, ' ')),
+                to_tsvector('english', a.name || ' ' || COALESCE(a.description, '') || ' ' || immuatable_array_to_string(a.tags, ' ')),
                 search_tsquery
             )
         END as search_rank
@@ -326,12 +326,12 @@ BEGIN
     LEFT JOIN public.profiles p ON a.author_id = p.id
     WHERE 
         a.status = 'published'
-        AND (search_query = '' OR to_tsvector('english', a.name || ' ' || COALESCE(a.description, '') || ' ' || array_to_string(a.tags, ' ')) @@ search_tsquery)
+        AND (search_query = '' OR to_tsvector('english', a.name || ' ' || COALESCE(a.description, '') || ' ' || immuatable_array_to_string(a.tags, ' ')) @@ search_tsquery)
         AND (category_filter IS NULL OR a.category_id = category_filter)
         AND (array_length(tag_filters, 1) IS NULL OR a.tags && tag_filters)
     ORDER BY
         CASE 
-            WHEN sort_by = 'relevance' AND search_query != '' THEN ts_rank(to_tsvector('english', a.name || ' ' || COALESCE(a.description, '') || ' ' || array_to_string(a.tags, ' ')), search_tsquery)
+            WHEN sort_by = 'relevance' AND search_query != '' THEN ts_rank(to_tsvector('english', a.name || ' ' || COALESCE(a.description, '') || ' ' || immuatable_array_to_string(a.tags, ' ')), search_tsquery)
             WHEN sort_by = 'rating' THEN a.rating_average
             WHEN sort_by = 'downloads' THEN a.download_count
             WHEN sort_by = 'newest' THEN extract(epoch from a.created_at)
@@ -436,7 +436,7 @@ BEGIN
     LEFT JOIN public.categories c ON a.category_id = c.id
     LEFT JOIN public.profiles p ON a.author_id = p.id
     LEFT JOIN public.agent_downloads ad ON a.id = ad.agent_id 
-        AND ad.created_at >= NOW() - INTERVAL '%s days' USING days_back
+        AND ad.created_at >= NOW() - (days_back || ' days')::interval
     WHERE a.status = 'published'
     GROUP BY a.id, a.name, a.description, c.name, p.username, a.rating_average, a.download_count, a.rating_count
     ORDER BY trend_score DESC

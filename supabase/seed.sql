@@ -1,3 +1,347 @@
--- Master seed file that runs all seed scripts in order
-\i categories.sql
-\i sample_data.sql
+-- Seed data for categories
+INSERT INTO public.categories (name, description, slug, icon, color) VALUES
+    ('Development Tools', 'Code editors, IDEs, build tools, and development utilities', 'development-tools', 'Code', '#3b82f6'),
+    ('Data Science', 'Machine learning, data analysis, and scientific computing tools', 'data-science', 'BarChart3', '#8b5cf6'),
+    ('Automation', 'Workflow automation, CI/CD, and task runners', 'automation', 'Zap', '#f59e0b'),
+    ('Web Development', 'Frontend frameworks, backend tools, and web utilities', 'web-development', 'Globe', '#10b981'),
+    ('Mobile Development', 'iOS, Android, and cross-platform mobile development tools', 'mobile-development', 'Smartphone', '#ec4899'),
+    ('DevOps', 'Container management, monitoring, and infrastructure tools', 'devops', 'Server', '#ef4444'),
+    ('Security', 'Security scanning, vulnerability testing, and compliance tools', 'security', 'Shield', '#dc2626'),
+    ('Design', 'UI/UX design tools, prototyping, and creative utilities', 'design', 'Palette', '#7c3aed'),
+    ('Documentation', 'Documentation generators, API docs, and technical writing tools', 'documentation', 'BookOpen', '#059669'),
+    ('Testing', 'Testing frameworks, quality assurance, and test automation', 'testing', 'CheckCircle', '#0ea5e9'),
+    ('Database', 'Database management, migration tools, and data utilities', 'database', 'Database', '#6366f1'),
+    ('Productivity', 'Task management, note-taking, and personal productivity tools', 'productivity', 'Clock', '#f97316'),
+    ('Communication', 'Chat bots, notification systems, and team collaboration tools', 'communication', 'MessageCircle', '#84cc16'),
+    ('Analytics', 'Monitoring, tracking, and business intelligence tools', 'analytics', 'TrendingUp', '#06b6d4'),
+    ('Content Management', 'CMS, blogging platforms, and content creation tools', 'content-management', 'FileText', '#8b5cf6'),
+    ('E-commerce', 'Online store builders, payment processing, and retail tools', 'ecommerce', 'ShoppingCart', '#f59e0b'),
+    ('API Tools', 'API development, testing, and integration utilities', 'api-tools', 'Plug', '#10b981'),
+    ('Gaming', 'Game development tools, engines, and gaming utilities', 'gaming', 'Gamepad2', '#ec4899'),
+    ('Finance', 'Financial modeling, trading tools, and fintech utilities', 'finance', 'DollarSign', '#059669'),
+    ('Education', 'Learning platforms, educational tools, and training resources', 'education', 'GraduationCap', '#7c3aed'),
+    ('Healthcare', 'Medical software, health monitoring, and healthcare IT tools', 'healthcare', 'Heart', '#dc2626'),
+    ('IoT', 'Internet of Things, sensor management, and embedded systems', 'iot', 'Cpu', '#6366f1'),
+    ('Blockchain', 'Cryptocurrency, smart contracts, and blockchain development', 'blockchain', 'Coins', '#f97316'),
+    ('AI & Machine Learning', 'Artificial intelligence, neural networks, and ML frameworks', 'ai-ml', 'Brain', '#8b5cf6'),
+    ('Utilities', 'System utilities, file management, and general-purpose tools', 'utilities', 'Wrench', '#6b7280');
+
+
+-- Sample data for testing and demonstration
+-- This file creates sample users, agents, and other content for development/testing
+
+-- Sample profiles (these would normally be created through auth, but we'll create them for testing)
+-- Note: In production, these should be created through the auth system
+
+ALTER TABLE profiles
+DROP CONSTRAINT IF EXISTS profiles_id_fkey;
+INSERT INTO public.profiles (id, username, full_name, bio, github_username, website_url) VALUES
+    ('00000000-0000-0000-0000-000000000001', 'johndoe', 'John Doe', 'Full-stack developer passionate about open source and automation.', 'johndoe', 'https://johndoe.dev'),
+    ('00000000-0000-0000-0000-000000000002', 'janecode', 'Jane Smith', 'Data scientist and ML engineer building intelligent tools.', 'janesmith', 'https://janesmith.ai'),
+    ('00000000-0000-0000-0000-000000000003', 'devops_guru', 'Alex Johnson', 'DevOps engineer focused on cloud infrastructure and automation.', 'alexjohnson', 'https://devops.guru'),
+    ('00000000-0000-0000-0000-000000000004', 'ui_wizard', 'Sarah Chen', 'UI/UX designer and frontend developer creating beautiful interfaces.', 'sarahchen', 'https://sarahchen.design'),
+    ('00000000-0000-0000-0000-000000000005', 'security_ninja', 'Mike Rodriguez', 'Cybersecurity expert building tools to make the web safer.', 'mikerodriguez', 'https://security.ninja')
+;
+
+-- Sample agents
+INSERT INTO public.agents (
+    id,
+    name, 
+    description, 
+    detailed_description,
+    category_id, 
+    author_id, 
+    status,
+    version,
+    tags,
+    github_url,
+    github_repo_name,
+    github_owner,
+    github_stars,
+    github_forks,
+    documentation_url,
+    demo_url,
+    license,
+    language,
+    framework,
+    rating_average,
+    rating_count,
+    download_count,
+    view_count,
+    is_featured
+) VALUES
+    (
+        '10000000-0000-0000-0000-000000000001',
+        'Code Formatter Pro',
+        'Advanced code formatting tool with support for 50+ languages and customizable rules.',
+        'Code Formatter Pro is a comprehensive code formatting solution that supports over 50 programming languages. It features intelligent formatting rules, customizable style guides, and integration with popular editors. Perfect for maintaining consistent code style across large projects.',
+        (SELECT id FROM public.categories WHERE slug = 'development-tools'),
+        '00000000-0000-0000-0000-000000000001',
+        'published',
+        '2.1.0',
+        ARRAY['formatting', 'code-quality', 'productivity', 'cli'],
+        'https://github.com/johndoe/code-formatter-pro',
+        'code-formatter-pro',
+        'johndoe',
+        1250,
+        89,
+        'https://code-formatter-pro.dev/docs',
+        'https://code-formatter-pro.dev/demo',
+        'MIT',
+        'TypeScript',
+        'Node.js',
+        4.7,
+        23,
+        127,
+        312,
+        true
+    ),
+    (
+        '10000000-0000-0000-0000-000000000002',
+        'ML Pipeline Builder',
+        'Visual interface for building machine learning pipelines with drag-and-drop components.',
+        'ML Pipeline Builder provides a visual, drag-and-drop interface for creating complex machine learning workflows. It supports popular ML frameworks like TensorFlow, PyTorch, and scikit-learn, making it easy for data scientists to experiment with different model architectures and data processing steps.',
+        (SELECT id FROM public.categories WHERE slug = 'data-science'),
+        '00000000-0000-0000-0000-000000000002',
+        'published',
+        '1.5.2',
+        ARRAY['machine-learning', 'data-science', 'visual-programming', 'tensorflow', 'pytorch'],
+        'https://github.com/janesmith/ml-pipeline-builder',
+        'ml-pipeline-builder',
+        'janesmith',
+        890,
+        156,
+        'https://ml-pipeline-builder.ai/docs',
+        'https://ml-pipeline-builder.ai',
+        'Apache-2.0',
+        'Python',
+        'React',
+        4.5,
+        31,
+        89,
+        267,
+        true
+    ),
+    (
+        '10000000-0000-0000-0000-000000000003',
+        'Docker Swarm Manager',
+        'Simplified Docker Swarm management with monitoring and auto-scaling capabilities.',
+        'Docker Swarm Manager is a comprehensive tool for managing Docker Swarm clusters. It provides real-time monitoring, automatic scaling based on resource usage, and a user-friendly dashboard for deploying and managing containerized applications at scale.',
+        (SELECT id FROM public.categories WHERE slug = 'devops'),
+        '00000000-0000-0000-0000-000000000003',
+        'published',
+        '3.0.1',
+        ARRAY['docker', 'container', 'orchestration', 'monitoring', 'devops'],
+        'https://github.com/alexjohnson/docker-swarm-manager',
+        'docker-swarm-manager',
+        'alexjohnson',
+        2340,
+        267,
+        'https://docker-swarm-manager.dev/docs',
+        NULL,
+        'GPL-3.0',
+        'Go',
+        'Docker',
+        4.8,
+        45,
+        203,
+        589,
+        true
+    ),
+    (
+        '10000000-0000-0000-0000-000000000004',
+        'Component Library Generator',
+        'Automatically generates design system components from Figma designs.',
+        'Component Library Generator bridges the gap between design and development by automatically generating React components from Figma designs. It extracts design tokens, creates TypeScript interfaces, and generates Storybook stories, significantly reducing the time from design to implementation.',
+        (SELECT id FROM public.categories WHERE slug = 'design'),
+        '00000000-0000-0000-0000-000000000004',
+        'published',
+        '1.2.3',
+        ARRAY['design-system', 'figma', 'react', 'storybook', 'automation'],
+        'https://github.com/sarahchen/component-library-generator',
+        'component-library-generator',
+        'sarahchen',
+        675,
+        78,
+        'https://component-lib-gen.design/docs',
+        'https://component-lib-gen.design/demo',
+        'MIT',
+        'TypeScript',
+        'React',
+        4.3,
+        18,
+        67,
+        198,
+        false
+    ),
+    (
+        '10000000-0000-0000-0000-000000000005',
+        'Security Scanner CLI',
+        'Command-line security scanner for web applications and APIs.',
+        'Security Scanner CLI is a powerful command-line tool for identifying security vulnerabilities in web applications and APIs. It performs automated security testing including OWASP Top 10 checks, SSL/TLS analysis, and dependency vulnerability scanning.',
+        (SELECT id FROM public.categories WHERE slug = 'security'),
+        '00000000-0000-0000-0000-000000000005',
+        'published',
+        '2.4.0',
+        ARRAY['security', 'vulnerability-scanning', 'owasp', 'cli', 'automation'],
+        'https://github.com/mikerodriguez/security-scanner-cli',
+        'security-scanner-cli',
+        'mikerodriguez',
+        1890,
+        234,
+        'https://security-scanner.ninja/docs',
+        NULL,
+        'BSD-3-Clause',
+        'Python',
+        'FastAPI',
+        4.6,
+        52,
+        156,
+        445,
+        true
+    ),
+    (
+        '10000000-0000-0000-0000-000000000006',
+        'API Documentation Generator',
+        'Generates beautiful API documentation from OpenAPI specifications.',
+        'API Documentation Generator creates stunning, interactive API documentation from OpenAPI/Swagger specifications. It features customizable themes, code examples in multiple languages, and built-in testing capabilities.',
+        (SELECT id FROM public.categories WHERE slug = 'documentation'),
+        '00000000-0000-0000-0000-000000000001',
+        'published',
+        '1.8.5',
+        ARRAY['api', 'documentation', 'openapi', 'swagger', 'interactive'],
+        'https://github.com/johndoe/api-doc-generator',
+        'api-doc-generator',
+        'johndoe',
+        945,
+        123,
+        'https://api-doc-gen.dev/docs',
+        'https://api-doc-gen.dev/example',
+        'MIT',
+        'JavaScript',
+        'Vue.js',
+        4.4,
+        27,
+        94,
+        278,
+        false
+    ),
+    (
+        '10000000-0000-0000-0000-000000000007',
+        'Test Automation Framework',
+        'Complete test automation framework with parallel execution and reporting.',
+        'Test Automation Framework is a comprehensive solution for automated testing with support for web, mobile, and API testing. It features parallel test execution, detailed reporting, and integration with popular CI/CD tools.',
+        (SELECT id FROM public.categories WHERE slug = 'testing'),
+        '00000000-0000-0000-0000-000000000002',
+        'published',
+        '3.1.2',
+        ARRAY['testing', 'automation', 'selenium', 'parallel-execution', 'reporting'],
+        'https://github.com/janesmith/test-automation-framework',
+        'test-automation-framework',
+        'janesmith',
+        1567,
+        298,
+        'https://test-framework.ai/docs',
+        NULL,
+        'Apache-2.0',
+        'Java',
+        'Selenium',
+        4.7,
+        39,
+        178,
+        423,
+        true
+    ),
+    (
+        '10000000-0000-0000-0000-000000000008',
+        'Database Migration Tool',
+        'Zero-downtime database migrations with rollback capabilities.',
+        'Database Migration Tool enables safe, zero-downtime database schema migrations with automatic rollback capabilities. It supports PostgreSQL, MySQL, and MongoDB, with built-in validation and testing features.',
+        (SELECT id FROM public.categories WHERE slug = 'database'),
+        '00000000-0000-0000-0000-000000000003',
+        'published',
+        '2.0.7',
+        ARRAY['database', 'migration', 'postgresql', 'mysql', 'zero-downtime'],
+        'https://github.com/alexjohnson/db-migration-tool',
+        'db-migration-tool',
+        'alexjohnson',
+        723,
+        89,
+        'https://db-migration.dev/docs',
+        NULL,
+        'MIT',
+        'Go',
+        NULL,
+        4.2,
+        21,
+        52,
+        167,
+        false
+    );
+
+-- Sample reviews
+-- INSERT INTO public.reviews (agent_id, user_id, overall_rating, title, content) VALUES
+--     ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000002', 5, 'Excellent formatting tool!', 'This tool has revolutionized our code review process. The formatting rules are comprehensive and the CLI integration is seamless.'),
+--     ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000003', 4, 'Great tool, minor issues', 'Overall fantastic, but had some issues with Rust formatting. Support was responsive and helpful.'),
+--     ('10000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000001', 5, 'Perfect for ML workflows', 'The visual pipeline builder makes it so easy to experiment with different ML architectures. Saved us weeks of development time.'),
+--     ('10000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000004', 4, 'Good but needs more templates', 'Solid tool with great potential. Would love to see more pre-built pipeline templates for common use cases.'),
+--     ('10000000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000005', 5, 'Best Docker management tool', 'Finally, a Docker Swarm manager that actually works as advertised. The monitoring dashboard is incredibly useful.'),
+--     ('10000000-0000-0000-0000-000000000004', '00000000-0000-0000-0000-000000000001', 4, 'Saves hours of work', 'Great concept and execution. Sometimes the component generation needs manual tweaking, but still saves tons of time.'),
+--     ('10000000-0000-0000-0000-000000000005', '00000000-0000-0000-0000-000000000002', 5, 'Must-have security tool', 'Comprehensive security scanning with excellent reporting. Found several vulnerabilities we missed in manual testing.')
+-- ON CONFLICT (agent_id, user_id) DO NOTHING;
+
+-- Sample votes on agents
+INSERT INTO public.votes (user_id, agent_id, vote_type) VALUES
+    ('00000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000001', 'upvote'),
+    ('00000000-0000-0000-0000-000000000003', '10000000-0000-0000-0000-000000000001', 'upvote'),
+    ('00000000-0000-0000-0000-000000000004', '10000000-0000-0000-0000-000000000001', 'upvote'),
+    ('00000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000002', 'upvote'),
+    ('00000000-0000-0000-0000-000000000003', '10000000-0000-0000-0000-000000000002', 'upvote'),
+    ('00000000-0000-0000-0000-000000000004', '10000000-0000-0000-0000-000000000002', 'upvote'),
+    ('00000000-0000-0000-0000-000000000005', '10000000-0000-0000-0000-000000000002', 'upvote'),
+    ('00000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000003', 'upvote'),
+    ('00000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000003', 'upvote'),
+    ('00000000-0000-0000-0000-000000000004', '10000000-0000-0000-0000-000000000003', 'upvote')
+;
+-- Sample collections
+INSERT INTO public.collections (id, name, description, user_id, is_public, slug) VALUES
+    ('20000000-0000-0000-0000-000000000001', 'Essential Dev Tools', 'My curated list of must-have development tools', '00000000-0000-0000-0000-000000000001', true, 'essential-dev-tools'),
+    ('20000000-0000-0000-0000-000000000002', 'ML Toolkit', 'Best machine learning and data science tools', '00000000-0000-0000-0000-000000000002', true, 'ml-toolkit'),
+    ('20000000-0000-0000-0000-000000000003', 'DevOps Arsenal', 'Tools for modern DevOps practices', '00000000-0000-0000-0000-000000000003', true, 'devops-arsenal'),
+    ('20000000-0000-0000-0000-000000000004', 'Design System Tools', 'Everything you need for design systems', '00000000-0000-0000-0000-000000000004', true, 'design-system-tools'),
+    ('20000000-0000-0000-0000-000000000005', 'Security Essentials', 'Critical security tools for developers', '00000000-0000-0000-0000-000000000005', true, 'security-essentials')
+;
+-- Sample collection agents
+INSERT INTO public.collection_agents (collection_id, agent_id, position) VALUES
+    ('20000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000001', 1),
+    ('20000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000006', 2),
+    ('20000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000002', 1),
+    ('20000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000007', 2),
+    ('20000000-0000-0000-0000-000000000003', '10000000-0000-0000-0000-000000000003', 1),
+    ('20000000-0000-0000-0000-000000000003', '10000000-0000-0000-0000-000000000008', 2),
+    ('20000000-0000-0000-0000-000000000004', '10000000-0000-0000-0000-000000000004', 1),
+    ('20000000-0000-0000-0000-000000000005', '10000000-0000-0000-0000-000000000005', 1)
+;
+-- Sample bookmarks
+INSERT INTO public.bookmarks (user_id, agent_id) VALUES
+    ('00000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000002'),
+    ('00000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000003'),
+    ('00000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000001'),
+    ('00000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000005'),
+    ('00000000-0000-0000-0000-000000000003', '10000000-0000-0000-0000-000000000001'),
+    ('00000000-0000-0000-0000-000000000003', '10000000-0000-0000-0000-000000000002'),
+    ('00000000-0000-0000-0000-000000000004', '10000000-0000-0000-0000-000000000001'),
+    ('00000000-0000-0000-0000-000000000005', '10000000-0000-0000-0000-000000000003')
+;
+
+-- Sample follows
+INSERT INTO public.follows (follower_id, following_id) VALUES
+    ('00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000002'),
+    ('00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000003'),
+    ('00000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000001'),
+    ('00000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000004'),
+    ('00000000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000001'),
+    ('00000000-0000-0000-0000-000000000004', '00000000-0000-0000-0000-000000000002'),
+    ('00000000-0000-0000-0000-000000000005', '00000000-0000-0000-0000-000000000001')
+;
+
